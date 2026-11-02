@@ -1,0 +1,28 @@
+{
+  "categories": [
+    { "id": "all", "name": "All Items", "icon": "fa-utensils" },
+    { "id": "biryani", "name": "Biryani & Rice", "img": "https://images.unsplash.com/..." },
+    { "id": "starters", "name": "Starters & Tandoor", "img": "https://images.unsplash.com/..." }
+  ],
+  "menu": [
+    { 
+      "id": 1, 
+      "name": "Paneer Tikka Tandoori", 
+      "category": "Starters & Tandoor", 
+      "price": 280, 
+      "image": "https://images.unsplash.com/...", 
+      "description": "Cottage cheese marinated in spices." 
+    }
+  ],
+  "advertisements": [
+    { 
+      "id": 1, 
+      "title": "Festival Biryani", 
+      "description": "20% Off", 
+      "category": "Festival Specials", 
+      "image": "https://images.unsplash.com/...", 
+      "is_published": true, 
+      "expires_at": "2025-12-31" 
+    }
+  ]
+}

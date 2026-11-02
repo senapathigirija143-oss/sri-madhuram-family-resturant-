@@ -1,0 +1,92 @@
+/* Custom Scrollbar Removal */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Backdrop Blur for Modals */
+.modal-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Thermal Printing Logic (80mm) */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #printable-receipt, #printable-receipt * {
+        visibility: visible;
+    }
+    #printable-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 12px;
+        padding: 10px;
+        color: #000;
+    }
+}
+
+/* Ad Card Hover Animation */
+.restaurant-updates-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.restaurant-updates-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Ad Category Badges */
+.category-badge-special { background-color: #FEE2E2; color: #991B1B; }
+.category-badge-festival { background-color: #FEF3C7; color: #92400E; }
+.category-badge-new { background-color: #D1FAE5; color: #065F46; }
+.category-badge-combo { background-color: #DBEAFE; color: #1E40AF; }
+.category-badge-announcement { background-color: #F3E8FF; color: #6B21A8; }
+.category-badge-other { background-color: #F3F4F6; color: #374151; }
+
+/* Portal Transitions */
+.portal-section {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Table Occupied Animation */
+.occupied-table {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); background-color: #fff1f1; }
+}
+
+/* ... existing CSS ... */
+
+.basket-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* Fix for header overlap on mobile/desktop */
+.hero-section-padding {
+    padding-top: 80px;
+}
+
+.modal-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}

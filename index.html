@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Madhuram Family Restaurant - Professional Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-blur { backdrop-filter: blur(8px); }
+        .portal-section { transition: opacity 0.3s ease-in-out; }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-receipt, #printable-receipt * { visibility: visible; }
+            #printable-receipt { position: absolute; left: 0; top: 0; width: 80mm; font-family: monospace; font-size: 12px; padding: 10px; color: #000; }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { red: '#D32F2F', darkRed: '#9A0007', orange: '#FF6F00', purple: '#4A148C', heroPurple: '#3B0F70', cream: '#FFFBEA' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- TOP NAVIGATION -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPortal('customer')">
+                <div class="bg-brand-red text-white p-2.5 rounded-2xl flex items-center justify-center shadow-lg shadow-red-200">
+                    <i class="fa-solid fa-utensils text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-brand-red tracking-tight uppercase leading-none">sri madhuram</h1>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mt-0.5">Family Restaurant</p>
+                </div>
+            </div>
+
+            <div id="navTabsContainer" class="hidden bg-gray-100 p-1.5 rounded-2xl flex items-center space-x-1 shadow-inner border border-gray-200">
+                <button id="tabOnline" onclick="switchPortal('customer')" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 bg-brand-red text-white flex items-center gap-2">
+                    <i class="fa-solid fa-utensils"></i> Order
+                </button>
+                <button id="tabStaff" onclick="switchPortal('staff')" class="hidden px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white/50 transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-chair"></i> Staff
+                </button>
+                <button id="tabAdmin" onclick="switchPortal('admin')" class="hidden px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white/50 transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield"></i> Admin
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button id="header-basket-btn" onclick="openCart()" aria-label="Open basket" class="relative p-2.5 rounded-xl bg-amber-50 text-amber-700 hover:bg-amber-100 transition border border-amber-200">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                    <span id="header-basket-count" class="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-brand-red text-white text-[10px] font-black flex items-center justify-center">0</span>
+                </button>
+                <button id="header-track-btn" onclick="toggleOrderTrackerModal(true)" class="hidden px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 font-bold text-xs hover:bg-emerald-100 transition border border-emerald-200">
+                    <i class="fa-solid fa-truck-fast mr-1"></i> Track
+                </button>
+                <button id="header-auth-btn" onclick="openAuthModal()" class="px-4 py-2.5 rounded-xl bg-stone-900 text-white font-bold text-xs hover:bg-stone-800 transition shadow flex items-center gap-2">
+                    <i class="fa-solid fa-user"></i> <span id="header-auth-text">Sign In</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- CUSTOMER PORTAL -->
+        <section id="customer-portal" class="block portal-section">
+            <div class="bg-gradient-to-r from-brand-heroPurple via-purple-900 to-indigo-950 text-white pt-24 pb-12 px-4 relative overflow-hidden">
+                <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                    <div class="text-center md:text-left md:max-w-xl">
+                        <h2 class="text-3xl md:text-5xl font-black leading-tight mb-4">Delicious Dishes Delivered To Your Doorstep</h2>
+                        <p class="text-purple-200 mb-6 text-sm md:text-base">Authentic flavors and signature biryanis prepared by master chefs.</p>
+                        <div class="bg-white p-2 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-2 text-gray-800">
+                            <div class="flex items-center px-3 py-2 border-b md:border-b-0 md:border-r border-gray-200 flex-1 cursor-pointer hover:bg-gray-50 transition" onclick="openAddressModal()">
+                                <i class="fa-solid fa-location-dot text-brand-red text-lg mr-2"></i>
+                                <div class="text-left text-xs">
+                                    <p class="font-semibold text-gray-400">Deliver to</p>
+                                    <p id="hero-delivery-location" class="font-bold text-gray-800 truncate">Select Address</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center px-3 py-2 flex-1">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2"></i>
+                                <input type="text" id="menu-search-input" onkeyup="filterMenuSearch()" placeholder="Search menu..." class="w-full text-sm font-medium focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&q=80" class="w-48 h-48 md:w-64 md:h-64 object-cover rounded-3xl shadow-2xl transform -rotate-3 border-4 border-white/20">
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl md:text-2xl font-black text-gray-900 flex items-center">
+                        <span class="w-2 h-6 bg-brand-red rounded-full mr-2"></span> Categories
+                    </h3>
+                </div>
+                <div class="flex space-x-4 overflow-x-auto no-scrollbar py-2" id="category-visual-list"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 mb-6">
+                <div class="flex space-x-2 overflow-x-auto no-scrollbar pb-2" id="category-pills"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 pb-16">
+                <div id="menu-grid" class="space-y-10"></div>
+            </div>
+        </section>
+
+        <!-- STAFF & ADMIN PORTALS -->
+   <section id="staff-portal" class="hidden max-w-7xl mx-auto px-4 pt-24 pb-8 portal-section">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b gap-4">
+                <div class="text-2xl font-black text-gray-900">Staff Console</div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="switchStaffTab('tables')" id="staff-tab-tables" class="px-4 py-2 rounded-xl text-sm font-bold bg-brand-red text-white">Tables</button>
+                    <button onclick="switchStaffTab('kds')" id="staff-tab-kds" class="px-4 py-2 rounded-xl text-sm font-bold bg-gray-200 text-gray-700">Kitchen KDS</button>
+                </div>
+            </div>
+            <div id="staff-tables-view"><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="tables-grid"></div></div>
+            <div id="staff-kds-view" class="hidden"><div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="kds-orders-container"></div></div>
+        </section>
+
+      <section id="admin-portal" class="hidden max-w-7xl mx-auto px-4 pt-24 pb-8 portal-section">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-purple-100">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-[0.2em] text-purple-600 mb-2">Administration · Business intelligence</p>
+                    <h2 class="text-3xl md:text-4xl font-black tracking-tight text-purple-950">Executive Dashboard</h2>
+                    <p class="text-sm text-gray-500 mt-2">A real-time overview of restaurant sales and operations.</p>
+                </div>
+               <div class="flex flex-wrap gap-2">
+    <button onclick="switchAdminTab('stats')" id="adm-tab-stats"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-900 text-white">
+        Overview
+    </button>
+
+    <button onclick="switchAdminTab('menu')" id="adm-tab-menu"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-700">
+        Manage Menu
+    </button>
+
+    <button onclick="switchAdminTab('posters')" id="adm-tab-posters"
+        class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-700">
+        Manage Posters
+    </button>
+</div>
+            </div>
+            <div id="admin-dashboard-controls" class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-black text-gray-900">Business snapshot</h3>
+                    <p class="text-xs text-gray-500 mt-1">Current order, revenue, and service indicators</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="admin-dashboard-date" class="hidden sm:inline text-xs font-semibold text-gray-500"></span>
+                    <button onclick="refreshAdminDashboard()" class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div id="admin-stats-view">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Total Sales</p><h4 id="stat-total-sales" class="text-2xl font-black text-gray-800">₹0</h4></div>
+                        <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Orders</p><h4 id="stat-total-orders" class="text-2xl font-black text-gray-800">0</h4></div>
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-receipt"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Pending Orders</p><h4 id="stat-pending-orders" class="text-2xl font-black text-gray-800">0</h4></div>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-clock"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Menu Items</p><h4 id="stat-menu-items" class="text-2xl font-black text-gray-800">0</h4></div>
+                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-bowl-food"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Kitchen Queue</p><h4 id="stat-kds-count" class="text-2xl font-black text-gray-800">0</h4></div>
+                        <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-fire-burner"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center justify-between">
+                        <div><p class="text-xs font-semibold text-gray-400 uppercase">Occupied Tables</p><h4 id="stat-occupied-tables" class="text-2xl font-black text-gray-800">0/25</h4></div>
+                        <div class="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chair"></i></div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+                    <h3 class="font-bold text-lg mb-4">All Orders</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 uppercase text-xs border-b">
+                                <tr><th class="p-3">ID / Items</th><th class="p-3">Customer</th><th class="p-3">Contact</th><th class="p-3">Delivery Address</th><th class="p-3">Payment</th><th class="p-3">Total</th><th class="p-3">Status</th><th class="p-3">Cancellation / Refund</th><th class="p-3">Action</th></tr>
+                            </thead>
+                            <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <div id="admin-menu-view" class="hidden">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-lg">Catalog Management</h3>
+                        <button id="admin-add-item-btn" onclick="openAddDishModal()" class="hidden bg-brand-red text-white px-4 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i> Add Item</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 border-b">
+                                <tr><th class="p-3">Image</th><th class="p-3">Dish</th><th class="p-3">Category</th><th class="p-3">Price</th><th class="p-3">Actions</th></tr>
+                            </thead>
+                            <tbody id="admin-menu-table-body" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="admin-posters-view" class="hidden">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm mb-6">
+                    <h3 class="font-bold text-lg mb-4">Add Promotional Poster</h3>
+                    <form id="poster-form" onsubmit="savePoster(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="text-xs font-bold text-gray-700">Poster title
+                            <input id="poster-title" type="text" required maxlength="100" placeholder="e.g. Weekend Biryani Special" class="mt-1 w-full p-3 rounded-xl border bg-gray-50 text-sm">
+                        </label>
+                        <label class="text-xs font-bold text-gray-700">Image URL
+                            <input id="poster-image" type="url" required placeholder="https://..." class="mt-1 w-full p-3 rounded-xl border bg-gray-50 text-sm">
+                        </label>
+                        <div id="poster-form-preview-wrap" class="hidden md:col-span-2 rounded-xl border bg-gray-50 p-3">
+                            <p id="poster-form-preview-title" class="font-bold text-sm mb-2"></p>
+                            <img id="poster-form-preview-image" alt="Poster preview" class="h-40 w-full rounded-lg object-cover">
+                        </div>
+                        <p id="poster-form-error" class="hidden md:col-span-2 text-sm font-semibold text-red-600" role="alert"></p>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-brand-red text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-darkRed transition">
+                                <i class="fa-solid fa-plus mr-1"></i> Add Poster
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border shadow-sm">
+                    <h3 class="font-bold text-lg mb-4">Added Posters</h3>
+                    <div id="admin-posters-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+            </section>
+    </main>
+
+    <div id="dish-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <form onsubmit="saveDish(event)" class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-4">
+            <button type="button" onclick="closeDishModal()" class="absolute right-4 top-4 text-gray-400 text-xl" aria-label="Close">&times;</button>
+            <div>
+                <h3 id="dish-modal-title" class="text-xl font-black text-gray-900">Add Menu Item</h3>
+                <p class="text-xs text-gray-500 mt-1">Enter the dish details shown to customers.</p>
+            </div>
+            <input id="dish-name" type="text" required maxlength="100" placeholder="Item name" class="w-full p-3 rounded-xl border bg-gray-50 text-sm">
+            <div class="grid grid-cols-2 gap-3">
+                <input id="dish-category" type="text" required maxlength="60" list="dish-category-options" placeholder="Category" class="w-full p-3 rounded-xl border bg-gray-50 text-sm">
+                <datalist id="dish-category-options"></datalist>
+                <input id="dish-price" type="number" required min="1" step="1" placeholder="Price (₹)" class="w-full p-3 rounded-xl border bg-gray-50 text-sm">
+            </div>
+            <input id="dish-image" type="url" required placeholder="Image URL (https://...)" class="w-full p-3 rounded-xl border bg-gray-50 text-sm">
+            <div id="dish-image-preview-wrap" class="hidden rounded-xl border bg-gray-50 p-2">
+                <img id="dish-image-preview" alt="Menu item preview" class="h-36 w-full rounded-lg object-cover">
+            </div>
+            <p id="dish-form-error" class="hidden text-sm font-semibold text-red-600" role="alert"></p>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeDishModal()" class="px-4 py-2 rounded-xl border text-sm font-bold text-gray-600">Cancel</button>
+                <button id="dish-save-btn" type="submit" class="px-5 py-2 rounded-xl bg-brand-red text-white text-sm font-bold">Save Item</button>
+            </div>
+        </form>
+    </div>
+
+    <section id="customer-posters" class="hidden max-w-7xl mx-auto w-full px-4 py-8">
+        <h2 class="text-xl md:text-2xl font-black text-gray-900 mb-4">Restaurant Offers</h2>
+        <div id="customer-posters-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-stone-900 text-stone-300 py-10 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8">
+            <div>
+                <div class="flex items-center space-x-2 mb-3">
+                    <div class="bg-brand-red text-white p-2 rounded-xl"><i class="fa-solid fa-utensils"></i></div>
+                    <span class="text-xl font-black text-white uppercase">Sri Madhuram</span>
+                </div>
+                <p class="text-xs text-stone-400">Authentic Indian Cuisine delivered to your home.</p>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase mb-3">Quick Links</h4>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" onclick="switchPortal('customer')" class="hover:text-amber-400">Home Menu</a></li>
+                    <li><a href="#" onclick="openAuthModal()" class="hover:text-amber-400">My Profile</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase mb-3">Contact</h4>
+                <p id="footer-restaurant-phone" class="text-xs text-stone-400">+91 98765 43210</p>
+                <p id="footer-restaurant-email" class="text-xs text-stone-400">info@srimadhuram.com</p>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase mb-3">Hours</h4>
+                <p id="footer-opening-hours" class="text-xs font-bold text-amber-400">11:00 AM - 11:00 PM</p>
+            </div>
+            <div>
+                <h3 class="text-white font-bold text-lg mb-4">LOCATION</h3>
+                <div class="w-full max-w-[230px]">
+                    <a href="https://maps.app.goo.gl/sgteGWWKmJuuUkSy9" target="_blank" rel="noopener noreferrer" class="block rounded-lg overflow-hidden border border-white/20">
+                        <iframe
+                            src="https://www.google.com/maps?q=Sri+Madhuram+Family+Restaurant,+16-10-2-23,+60+Ft+Road,+Gajuwaka,+Andhra+Pradesh&output=embed"
+                            width="230"
+                            height="125"
+                            style="border:0; display:block; pointer-events:none;"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Sri Madhuram Family Restaurant Location">
+                        </iframe>
+                    </a>
+                    <a href="https://maps.app.goo.gl/sgteGWWKmJuuUkSy9" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-yellow-400 mt-2 transition">
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        View on Google Maps ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS (Auth, Cart, Address, Payment, Tracker, Table) -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute right-4 top-4 text-gray-400 text-xl">&times;</button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-brand-red text-white rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-red-200"><i class="fa-solid fa-user-lock"></i></div>
+                <h3 id="auth-title" class="text-xl font-black text-gray-900">Sign In</h3>
+                <p id="auth-subtitle" class="text-xs text-gray-500">Welcome back to Sri Madhuram</p>
+            </div>
+            <div class="flex bg-gray-100 p-1 rounded-xl mb-6 text-xs font-bold">
+                <button id="btn-signin-tab" onclick="toggleAuthMode('signin')" class="flex-1 py-2 rounded-lg bg-white shadow text-brand-red">Sign In</button>
+                <button id="btn-reg-tab" onclick="toggleAuthMode('register')" class="flex-1 py-2 rounded-lg text-gray-600">Register</button>
+            </div>
+            <form id="signin-form" onsubmit="handleSignin(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-700 uppercase">Account Role</label>
+                    <select id="auth-role" class="w-full text-sm p-3 rounded-xl border bg-gray-50 font-semibold focus:outline-none focus:border-brand-red">
+                        <option value="customer">Customer</option>
+                        <option value="staff">Staff / Dine-in</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label id="auth-identity-label" class="text-xs font-bold text-gray-700 uppercase">Mobile Phone</label>
+                    <input type="tel" id="auth-phone" required pattern="[0-9]{10}" placeholder="9876543210" class="w-full text-sm p-3 rounded-xl border bg-gray-50 font-bold focus:outline-none focus:border-brand-red">
+                    <div id="customer-password-wrap" class="space-y-1">
+    <label for="auth-customer-password"
+           class="text-xs font-bold text-gray-700 uppercase">
+        Password
+    </label>
+    <input
+        type="password"
+        id="auth-customer-password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        class="w-full text-sm p-3 rounded-xl border bg-gray-50"
+    >
+</div>
+                </div>
+                <div id="admin-password-wrap" class="hidden space-y-1">
+                    <label for="auth-admin-password" class="text-xs font-bold text-gray-700 uppercase">Administrator Password</label>
+                    <input type="password" id="auth-admin-password" autocomplete="current-password" placeholder="Enter your administrator password" class="w-full text-sm p-3 rounded-xl border bg-gray-50 font-bold focus:outline-none focus:border-brand-red">
+                </div>
+                <p id="signin-error" class="hidden text-xs font-semibold text-red-600" role="alert"></p>
+                <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkRed text-white font-black py-3 rounded-xl text-sm shadow-lg transition">Login</button>
+            </form>
+            <form id="reg-form" onsubmit="handleRegister(event)" class="hidden space-y-3">
+              <div class="space-y-2">
+    <label for="reg-email" class="text-xs font-bold text-gray-700">
+        Email Address
+    </label>
+
+    <div class="flex gap-2">
+        <input
+            type="email"
+            id="reg-email"
+            placeholder="Enter your email"
+            required
+            class="text-xs p-3 rounded-xl border bg-gray-50 w-full"
+        >
+
+        <button
+            type="button"
+            id="send-email-otp-btn"
+            onclick="sendEmailOTP()"
+            class="px-3 py-2 rounded-xl bg-brand-red text-white text-xs font-bold whitespace-nowrap"
+        >
+            Send OTP
+        </button>
+    </div>
+
+    <div class="flex gap-2">
+        <input
+            type="text"
+            id="email-otp"
+            placeholder="Enter 6-digit OTP"
+            inputmode="numeric"
+            maxlength="6"
+            class="text-xs p-3 rounded-xl border bg-gray-50 w-full"
+        >
+
+        <button
+            type="button"
+            id="verify-email-otp-btn"
+            onclick="verifyEmailOTP()"
+            class="px-3 py-2 rounded-xl bg-gray-800 text-white text-xs font-bold"
+        >
+            Verify
+        </button>
+    </div>
+
+    <p id="email-otp-status" class="text-xs" role="status"></p>
+</div>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="reg-name" placeholder="Full Name *" required class="text-xs p-3 rounded-xl border bg-gray-50 w-full">
+                    <input type="tel" id="reg-phone" placeholder="Mobile Number *" required pattern="[0-9]{10}" class="text-xs p-3 rounded-xl border bg-gray-50 w-full">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="password" id="reg-pass" placeholder="Password *" required class="text-xs p-3 rounded-xl border bg-gray-50 w-full">
+                    <input type="password" id="reg-confirm" placeholder="Confirm Password *" required class="text-xs p-3 rounded-xl border bg-gray-50 w-full">
+                </div>
+                <div class="bg-gray-100 p-3 rounded-xl space-y-2">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Default Delivery Address</p>
+                    <input type="text" id="reg-addr-house" placeholder="House No / Street" class="text-xs p-2 rounded-lg border w-full">
+                    <input type="text" id="reg-addr-city" placeholder="City & PIN" class="text-xs p-2 rounded-lg border w-full">
+                </div>
+                <button type="submit" class="w-full bg-brand-red hover:bg-brand-darkRed text-white font-black py-3 rounded-xl text-sm shadow-lg transition">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 modal-blur" onclick="closeCart()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col z-10">
+            <div class="p-4 border-b flex items-center justify-between bg-stone-900 text-white">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-shopping-bag text-amber-500"></i>
+                    <h3 class="font-extrabold text-lg">Basket</h3>
+                </div>
+                <button onclick="closeCart()" class="text-stone-400 text-xl">&times;</button>
+            </div>
+            <div id="cart-items-list" class="flex-grow p-4 overflow-y-auto space-y-3"></div>
+            <div class="p-4 border-t bg-stone-50 space-y-3">
+                <div class="space-y-1 text-xs text-stone-600">
+                    <div class="flex justify-between"><span>Subtotal</span><span id="cart-subtotal" class="font-semibold">₹0.00</span></div>
+                    <div class="flex justify-between"><span id="cart-tax-label">GST</span><span id="cart-tax" class="font-semibold">₹0.00</span></div>
+                    <div class="flex justify-between"><span>Delivery</span><span id="cart-delivery" class="font-semibold text-emerald-600">—</span></div>
+                    <div class="flex justify-between text-stone-900 text-base font-black pt-2 border-t"><span>Total</span><span id="cart-grand-total" class="text-brand-red">₹0.00</span></div>
+                </div>
+                <section class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-950" aria-label="Cancellation and refund policies">
+                    <p class="font-black">Cancellation and refund policies</p>
+                    <p class="mt-1"><strong>Policy 1 – Cancellation at Restaurant Stage:</strong> If a customer cancels the order while it is still at the restaurant stage and delivery has not started, provide a 100% full refund.</p>
+                    <p class="mt-2"><strong>Policy 2 – Cancellation at Delivery Stage:</strong> If a customer cancels after food preparation and delivery have started, deduct the food-making charges and delivery charges. Refund the remaining amount to the customer.</p>
+                </section>
+                <button onclick="proceedToAddressStep()" class="w-full bg-brand-red hover:bg-brand-darkRed text-white font-extrabold py-3 rounded-xl text-sm transition">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELIVERY ADDRESS MODAL -->
+    <div id="address-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative overflow-y-auto max-h-[90vh]">
+            <button onclick="closeAddressModal()" class="absolute right-4 top-4 text-gray-400 text-xl">&times;</button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl font-black"><i class="fa-solid fa-location-dot"></i></div>
+                <h3 class="text-xl font-black">Delivery Details</h3>
+                <p class="text-xs text-gray-500">Set your delivery location for accurate service.</p>
+            </div>
+            <button onclick="fetchLiveGPSLocation()" class="w-full bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-500 text-emerald-900 p-3.5 rounded-2xl font-bold text-sm mb-6 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-crosshairs text-emerald-600"></i> Use Current GPS Location
+            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Recipient Name *</label>
+                    <input type="text" id="loc-name" placeholder="Full Name" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Mobile Number *</label>
+                    <input type="tel" id="loc-phone" placeholder="10-digit number" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">House No / Street *</label>
+                    <input type="text" id="loc-house" placeholder="e.g. Flat 101" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Area / Landmark *</label>
+                    <input type="text" id="loc-area" placeholder="e.g. Near Apollo Hospital" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">City *</label>
+                    <input type="text" id="loc-city" placeholder="e.g. Visakhapatnam" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">PIN Code *</label>
+                    <input type="text" id="loc-pin" placeholder="6-digit pin" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+                <div class="space-y-1 md:col-span-2">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Landmark (Optional)</label>
+                    <input type="text" id="loc-landmark" placeholder="e.g. Opposite City Bank" class="w-full text-sm p-3 rounded-xl border bg-gray-50 outline-none">
+                </div>
+            </div>
+            <button onclick="confirmManualAddress()" class="w-full bg-brand-red text-white font-extrabold py-3 rounded-xl text-sm shadow-lg mt-6 transition hover:bg-brand-darkRed">Save Address</button>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div id="payment-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closePaymentModal()" class="absolute right-4 top-4 text-gray-400 text-xl">&times;</button>
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-black">Payment Verification</h3>
+                <p class="text-xs text-gray-500">Total: <span id="paymentModalTotal" class="font-extrabold text-brand-red text-lg">₹0.00</span></p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button id="opt-upi" onclick="selectPaymentOption('upi')" class="p-3.5 rounded-2xl border-2 border-brand-red bg-red-50 text-brand-red font-bold text-sm flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-qrcode text-lg"></i> UPI
+                </button>
+                <button id="opt-cod" onclick="selectPaymentOption('cod')" class="p-3.5 rounded-2xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-money-bill-wave text-lg"></i> COD
+                </button>
+            </div>
+            <div id="payment-upi-box" class="bg-gray-50 p-4 rounded-2xl border text-center space-y-2 mb-4">
+                <p class="text-xs font-bold text-gray-800">Pay securely with Razorpay</p>
+                <p class="text-xs text-gray-600">Your order is placed only after Razorpay confirms the payment.</p>
+            </div>
+            <div id="payment-cod-box" class="hidden bg-amber-50 p-4 rounded-2xl border border-amber-200 text-center mb-4">
+                <p class="text-xs font-bold text-amber-900">Cash on Delivery selected. Pay the delivery partner when your order arrives.</p>
+            </div>
+            <section class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-950 mb-4" aria-label="Cancellation and refund policies">
+                <p class="font-black">Cancellation and refund policies</p>
+                <p class="mt-1"><strong>Policy 1 – Cancellation at Restaurant Stage:</strong> If a customer cancels the order while it is still at the restaurant stage and delivery has not started, provide a 100% full refund.</p>
+                <p class="mt-2"><strong>Policy 2 – Cancellation at Delivery Stage:</strong> If a customer cancels after food preparation and delivery have started, deduct the food-making charges and delivery charges. Refund the remaining amount to the customer.</p>
+            </section>
+            <button id="pay-confirm-btn" onclick="verifyAndFinalizeOrder()" class="w-full bg-emerald-600 text-white font-black py-3 rounded-xl text-sm shadow-lg transition hover:bg-emerald-700">I have paid - Place Order</button>
+        </div>
+    </div>
+
+    <!-- ORDER TRACKER MODAL -->
+    <div id="trackOrderModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="toggleOrderTrackerModal()" class="absolute right-4 top-4 text-gray-400 text-xl">&times;</button>
+            <div class="flex items-center space-x-3 pb-4 border-b mb-4">
+                <div id="trackerHeaderIcon" class="w-10 h-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <h3 id="trackerOrderId" class="font-black text-lg">Order #----</h3>
+                    <p id="trackerStatusBadge" class="text-xs text-emerald-600 font-bold">Pending Approval</p>
+                </div>
+            </div>
+            <div id="trackerStepper" class="space-y-4 mb-6"></div>
+            <div class="bg-gray-50 p-3.5 rounded-2xl border text-xs space-y-1.5 text-gray-600">
+                <div class="flex justify-between"><span>Total:</span><span id="trackerTotal" class="font-bold text-gray-900">₹0</span></div>
+                <div class="flex justify-between"><span>Payment:</span><span id="trackerPaymentMode" class="font-bold text-gray-900">UPI</span></div>
+                <div class="pt-1 border-t"><span class="font-bold text-gray-800">Full Delivery Address:</span><span id="trackerAddress" class="text-[11px] text-gray-500 block">Not specified</span></div>
+            </div>
+            <section class="rounded-xl border border-amber-200 bg-amber-50 p-3 mt-4 text-[11px] leading-relaxed text-amber-950" aria-label="Cancellation and refund policies">
+                <p class="font-black">Cancellation and refund policies</p>
+                <p class="mt-1"><strong>Policy 1 – Cancellation at Restaurant Stage:</strong> If a customer cancels the order while it is still at the restaurant stage and delivery has not started, provide a 100% full refund.</p>
+                <p class="mt-2"><strong>Policy 2 – Cancellation at Delivery Stage:</strong> If a customer cancels after food preparation and delivery have started, deduct the food-making charges and delivery charges. Refund the remaining amount to the customer.</p>
+            </section>
+            <div id="tracker-cancellation-details" class="hidden rounded-xl border border-gray-200 bg-white p-3 mt-3 text-xs space-y-1.5"></div>
+            <button id="cancel-order-btn" type="button" onclick="openCancellationModal()" class="hidden w-full mt-3 rounded-xl border border-red-300 bg-red-50 py-2.5 text-sm font-bold text-red-700 hover:bg-red-100">Cancel Order</button>
+        </div>
+    </div>
+
+    <div id="cancel-order-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <button type="button" onclick="closeCancellationModal()" class="absolute right-4 top-4 text-gray-400 text-xl" aria-label="Close">&times;</button>
+            <h3 class="text-xl font-black text-gray-900">Review cancellation</h3>
+            <p id="cancel-preview-policy" class="text-xs text-gray-600 mt-2">Loading the applicable policy and refund calculation…</p>
+            <div id="cancel-preview-amounts" class="rounded-xl bg-gray-50 border p-3 mt-4 text-xs space-y-2"></div>
+            <label for="cancel-reason" class="block text-xs font-bold text-gray-700 mt-4 mb-1">Cancellation reason</label>
+            <textarea id="cancel-reason" maxlength="500" rows="3" class="w-full rounded-xl border p-3 text-sm" placeholder="Enter your reason"></textarea>
+            <p id="cancel-request-message" class="text-xs text-red-700 mt-2" role="status"></p>
+            <div class="flex gap-2 mt-4">
+                <button type="button" onclick="closeCancellationModal()" class="flex-1 rounded-xl border py-3 text-sm font-bold text-gray-700">Keep Order</button>
+                <button id="confirm-cancel-order-btn" type="button" onclick="confirmCancelOrder()" disabled class="flex-1 rounded-xl bg-red-600 py-3 text-sm font-bold text-white disabled:opacity-50">Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- TABLE BILLING MODAL -->
+    <div id="table-billing-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 modal-blur">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeTableBillingModal()" class="absolute right-4 top-4 text-gray-400 text-xl">&times;</button>
+            <div class="flex items-center gap-3 mb-4 pb-3 border-b">
+                <div class="w-10 h-10 rounded-2xl bg-brand-red text-white flex items-center justify-center font-black text-lg" id="modal-table-badge">T-1</div>
+                <div>
+                    <h3 class="text-xl font-black text-gray-900" id="modal-table-title">Table Management</h3>
+                    <p class="text-xs text-gray-500" id="modal-table-subtitle"></p>
+                </div>
+            </div>
+            <div id="table-order-items-list" class="max-h-40 overflow-y-auto space-y-2 text-sm border-t border-b py-2 mb-4"></div>
+            <div class="bg-gray-50 p-3 rounded-xl flex justify-between items-center text-sm font-bold mb-4">
+                <span>Total Bill:</span><span id="table-total-bill-text" class="text-brand-red font-black text-lg">₹0</span>
+            </div>
+            <div class="mb-5 bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                <label class="text-xs font-bold text-amber-900 block mb-1">Add Dish:</label>
+                <div class="flex gap-2">
+                    <select id="table-add-dish-select" class="flex-1 text-xs p-2 rounded-xl border"></select>
+                    <button onclick="addItemToSelectedTable()" class="bg-amber-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs">+ Add</button>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="saveTableOrder()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+                <button onclick="printTableReceipt()" class="flex-1 bg-gray-800 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-print"></i> Receipt
+                </button>
+                <button onclick="settleAndClearTable()" class="flex-1 bg-emerald-600 text-white font-extrabold py-3 rounded-xl text-xs flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-circle-check"></i> Settle
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="printable-receipt" class="hidden">
+        <div style="text-align:center; font-weight:bold; font-size:14px;">SRI MADHURAM RESTAURANT</div>
+        <div style="text-align:center; font-size:10px;">Gajuwaka, Visakhapatnam | Ph: +91 98765 43210</div>
+        <hr style="border-top:1px dashed #000; margin:5px 0;">
+        <div id="receipt-header-info" style="font-size:11px;"></div>
+        <hr style="border-top:1px dashed #000; margin:5px 0;">
+        <div id="receipt-items-list" style="font-size:10px;"></div>
+        <hr style="border-top:1px dashed #000; margin:5px 0;">
+        <div id="receipt-total-info" style="font-size:11px; font-weight:bold; text-align:right;"></div>
+        <div style="text-align:center; margin-top:10px; font-size:10px;">*** Thank You! Visit Again ***</div>
+    </div>
+
+    <script>
+        const state = {
+            activePortal: 'customer',
+            selectedCategory: 'All Items',
+            userRole: null, 
+            userPhone: null,
+            cart: [],
+            deliveryAddress: null, 
+            pendingGpsLocation: null,
+            paymentMethod: 'upi',
+            activeCustomerOrder: null,
+            pendingRazorpayPayment: null,
+            pendingCancellationPreview: null,
+            isCheckoutFlow: false, // Flag to separate address management from checkout
+            ordersList: [],
+            advertisements: [
+                { id: 1, title: "Festival Biryani Dhamaka", description: "Get 20% off on all family packs this weekend!", category: "Festival Specials", image: "https://images.unsplash.com/photo-1589302168068-967d63d6767d?w=500", is_published: true, expires_at: "2025-12-31", button_label: "Order Now", button_url: "#" },
+                { id: 2, title: "New Paneer Tikka Roast", description: "Try our new smoky charcoal roasted paneer tikka.", category: "New Menu Launches", image: "https://images.unsplash.com/photo-1567184109475-717f3f74f847?w=500", is_published: true, expires_at: "2025-12-31", button_label: "View Details", button_url: "#" }
+            ],
+            posters: [],
+            selectedTableId: null,
+            tablesData: Array.from({ length: 25 }, (_, i) => ({
+                id: i + 1,
+                status: (i === 1 || i === 5) ? 'occupied' : 'available',
+                seats: i % 2 === 0 ? 4 : 2,
+                items: (i === 1 || i === 5) ? [{ name: "Dum Biryani", qty: 2, price: 340 }] : []
+            })),
+            kdsOrders: [
+                { id: 501, title: "Table 1 Ticket", items: ["Dum Biryani x2"], time: "5m", status: "Cooking" }
+            ],
+            categories: [
+                { id: 'all', name: 'All Items', icon: 'fa-utensils' },
+                { id: 'biryani', name: 'Biryani & Rice', img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200&q=80' },
+                { id: 'starters', name: 'Starters & Tandoor', img: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=200&q=80' },
+                { id: 'main', name: 'Main Course', img: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&q=80' },
+                { id: 'breads', name: 'Breads & Naan', img: 'https://images.unsplash.com/photo-1626074353765-517a681e40be?w=200&q=80' },
+                { id: 'desserts', name: 'Desserts & Drinks', img: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=200&q=80' }
+            ],
+            menu: [],
+            authToken: null,
+            refreshToken: null,
+            restaurantSettings: null
+        };
+
+        let editingDishId = null;
+        let pendingAuthToken = null;
+        let pendingRegistrationRefreshToken = null;
+        let verifiedRegistrationEmail = null;
+
+        async function apiRequest(url, { method = 'GET', body } = {}, authRetried = false) {
+            const headers = {};
+            if (body !== undefined) headers['Content-Type'] = 'application/json';
+            const token = pendingAuthToken || state.authToken;
+            if (token) headers.Authorization = 'Bearer ' + token;
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: body === undefined ? undefined : JSON.stringify(body)
+            });
+            const result = await response.json().catch(() => ({}));
+
+            const canRefresh = response.status === 401 &&
+                !authRetried &&
+                !['/api/auth/refresh', '/api/customer/login', '/api/admin/login',
+                    '/api/send-otp', '/api/verify-otp'].includes(url);
+            const refreshToken = pendingAuthToken
+                ? pendingRegistrationRefreshToken
+                : state.refreshToken;
+
+            if (canRefresh && refreshToken) {
+                const refreshResponse = await fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken })
+                });
+                const refreshResult = await refreshResponse.json().catch(() => ({}));
+
+                if (!refreshResponse.ok) {
+                    state.authToken = null;
+                    state.refreshToken = null;
+                    pendingAuthToken = null;
+                    pendingRegistrationRefreshToken = null;
+                    throw new Error(refreshResult.error || 'Your session expired. Please sign in again.');
+                }
+
+                if (pendingAuthToken) {
+                    pendingAuthToken = refreshResult.accessToken;
+                    pendingRegistrationRefreshToken = refreshResult.refreshToken;
+                } else {
+                    state.authToken = refreshResult.accessToken;
+                    state.refreshToken = refreshResult.refreshToken;
+                }
+                return apiRequest(url, { method, body }, true);
+            }
+
+            if (!response.ok) throw new Error(result.error || `Request failed (${response.status}).`);
+            return result;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        async function persistMenu() {
+            try {
+                const result = await apiRequest('/api/admin/menu', {
+                    method: 'PUT',
+                    body: { items: state.menu },
+                });
+                state.menu = result.menu;
+                return true;
+            } catch (error) {
+                console.error('Unable to save menu items:', error);
+                alert(`The menu could not be saved: ${error.message}`);
+                return false;
+            }
+        }
+
+        function isAdmin() {
+            if (state.userRole === 'admin' && state.authToken) return true;
+            alert('Administrator access is required for this action.');
+            return false;
+        }
+
+        async function persistPosters() {
+            try {
+                const result = await apiRequest('/api/admin/posters', {
+                    method: 'PUT',
+                    body: { posters: state.posters },
+                });
+                state.posters = result.posters;
+                return true;
+            } catch (error) {
+                console.error('Unable to save posters:', error);
+                alert(`Posters could not be saved: ${error.message}`);
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            apiRequest('/api/public-data')
+                .then(data => {
+                    state.menu = data.menu;
+                    state.posters = data.posters;
+                    state.restaurantSettings = data.settings;
+                    if (data.settings) {
+                        document.getElementById('footer-restaurant-phone').textContent =
+                            data.settings.phone;
+                        document.getElementById('footer-restaurant-email').textContent =
+                            data.settings.email;
+                        document.getElementById('footer-opening-hours').textContent =
+                            data.settings.opening_hours;
+                    }
+                    renderCategoryCarousel(); renderCategoryPills(); renderMenuGrid(); renderAdminDashboard();
+                    renderAdminMenu(); renderAdminPosters(); renderUpdates();
+                })
+                .catch(error => {
+                    console.error('Unable to load restaurant data from Supabase:', error);
+                    document.getElementById('menu-grid').innerHTML =
+                        '<p class="col-span-full text-center text-sm text-red-600">Restaurant data could not be loaded. Please try again later.</p>';
+                });
+            renderCategoryCarousel(); renderCategoryPills(); renderMenuGrid();
+            renderTablesGrid(); renderKDSOrders(); renderAdminDashboard(); renderAdminMenu();
+            renderAdminPosters(); renderUpdates();
+            updateNavigationVisibility();
+            document.getElementById('dish-image').addEventListener('input', updateDishImagePreview);
+            document.getElementById('poster-image').addEventListener('input', updatePosterPreview);
+            document.getElementById('poster-title').addEventListener('input', updatePosterPreview);
+            document.getElementById('auth-role').addEventListener('change', updateAdminKeyVisibility);
+            document.getElementById('reg-email').addEventListener('input', () => {
+                verifiedRegistrationEmail = null;
+                pendingAuthToken = null;
+                document.getElementById('email-otp-status').textContent = '';
+            });
+            updateAdminKeyVisibility();
+        });
+
+        // --- AUTHENTICATION ---
+        function toggleAuthMode(mode) {
+            const signinForm = document.getElementById('signin-form');
+            const regForm = document.getElementById('reg-form');
+            const signinTab = document.getElementById('btn-signin-tab');
+            const regTab = document.getElementById('btn-reg-tab');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            if (mode === 'signin') {
+                signinForm.classList.remove('hidden'); regForm.classList.add('hidden');
+                signinTab.className = "flex-1 py-2 rounded-lg bg-white shadow text-brand-red";
+                regTab.className = "flex-1 py-2 rounded-lg text-gray-600";
+                title.innerText = "Sign In"; subtitle.innerText = "Welcome back to Sri Madhuram";
+            } else {
+                signinForm.classList.add('hidden'); regForm.classList.remove('hidden');
+                regTab.className = "flex-1 py-2 rounded-lg bg-white shadow text-brand-red";
+                signinTab.className = "flex-1 py-2 rounded-lg text-gray-600";
+                title.innerText = "Register"; subtitle.innerText = "Join our family of food lovers";
+            }
+        }
+
+        function updateAdminKeyVisibility() {
+            const role = document.getElementById("auth-role").value;
+            const isAdministrator = role === "admin";
+            const isCustomer = role === "customer";
+            const identityInput = document.getElementById("auth-phone");
+            const identityLabel = document.getElementById("auth-identity-label");
+            const adminPassword = document.getElementById("auth-admin-password");
+
+            identityLabel.textContent = isAdministrator ? "Administrator Email" : "Mobile Phone";
+            identityInput.type = isAdministrator ? "email" : "tel";
+            identityInput.placeholder = isAdministrator ? "admin@example.com" : "9876543210";
+            if (isAdministrator) {
+                identityInput.removeAttribute("pattern");
+            } else {
+                identityInput.pattern = "[0-9]{10}";
+            }
+            adminPassword.required = isAdministrator;
+            document.getElementById("admin-password-wrap")
+                .classList.toggle("hidden", !isAdministrator);
+
+            const passwordWrap = document.getElementById("customer-password-wrap");
+            const passwordInput = document.getElementById("auth-customer-password");
+            passwordWrap.classList.toggle("hidden", !isCustomer);
+            passwordInput.required = isCustomer;
+        }
+
+       async function handleSignin(e) {
+    e.preventDefault();
+
+    const role = document.getElementById("auth-role").value;
+    const error = document.getElementById("signin-error");
+
+    error.classList.add("hidden");
+
+    if (role === "customer") {
+        try {
+            const result = await apiRequest("/api/customer/login", {
+                method: "POST",
+                body: {
+                    phone: document.getElementById("auth-phone").value,
+                    password: document.getElementById(
+                        "auth-customer-password"
+                    ).value
+                }
+            });
+
+            state.authToken = result.accessToken;
+            state.refreshToken = result.refreshToken;
+            pendingAuthToken = null;
+            pendingRegistrationRefreshToken = null;
+            state.userRole = "customer";
+            state.userPhone = result.customer.phone;
+            state.customerName = result.customer.name;
+
+            completeAuth();
+            document.getElementById("auth-customer-password").value = "";
+            return;
+        } catch (err) {
+            error.innerText = err.message;
+            error.classList.remove("hidden");
+            return;
+        }
+    }
+
+    if (role === "admin") {
+        try {
+            const result = await apiRequest("/api/admin/login", {
+                method: "POST",
+                body: {
+                    email: document.getElementById("auth-phone").value.trim(),
+                    password: document.getElementById("auth-admin-password").value
+                }
+            });
+            state.authToken = result.accessToken;
+            state.refreshToken = result.refreshToken;
+            pendingAuthToken = null;
+            pendingRegistrationRefreshToken = null;
+            const adminData = await apiRequest("/api/admin/data");
+            state.ordersList = adminData.orders;
+        } catch (err) {
+            state.authToken = null;
+            state.refreshToken = null;
+            error.innerText = err.message;
+            error.classList.remove("hidden");
+            return;
+        }
+    } else {
+        state.authToken = null;
+        state.refreshToken = null;
+    }
+
+    state.userRole = role;
+    state.userPhone = document.getElementById("auth-phone").value;
+    completeAuth();
+    document.getElementById("auth-admin-password").value = "";
+    if (role === "admin") document.getElementById("auth-phone").value = "";
+}
+        async function sendEmailOTP() {
+            const emailInput = document.getElementById('reg-email');
+            const status = document.getElementById('email-otp-status');
+            const button = document.getElementById('send-email-otp-btn');
+            if (!emailInput.reportValidity()) return;
+
+            status.classList.remove('text-emerald-600', 'text-red-600');
+            status.classList.add('text-gray-600');
+            button.disabled = true;
+            try {
+                verifiedRegistrationEmail = null;
+                pendingAuthToken = null;
+                pendingRegistrationRefreshToken = null;
+                await apiRequest('/api/send-otp', {
+                    method: 'POST',
+                    body: { email: emailInput.value.trim() }
+                });
+                verifiedRegistrationEmail = null;
+                status.textContent = 'Verification code sent. Check your email.';
+            } catch (error) {
+                status.classList.remove('text-gray-600');
+                status.classList.add('text-red-600');
+                status.textContent = error.message;
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function verifyEmailOTP() {
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const code = document.getElementById('email-otp').value.trim();
+            const status = document.getElementById('email-otp-status');
+            status.classList.remove('text-emerald-600', 'text-red-600');
+            status.classList.add('text-gray-600');
+
+            try {
+                const result = await apiRequest('/api/verify-otp', {
+                    method: 'POST',
+                    body: { email, code }
+                });
+                pendingAuthToken = result.accessToken;
+                pendingRegistrationRefreshToken = result.refreshToken;
+                verifiedRegistrationEmail = email;
+                status.classList.remove('text-gray-600');
+                status.classList.add('text-emerald-600');
+                status.textContent = 'Email verified.';
+            } catch (error) {
+                verifiedRegistrationEmail = null;
+                status.classList.remove('text-gray-600');
+                status.classList.add('text-red-600');
+                status.textContent = error.message;
+            }
+        }
+
+        async function handleRegister(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("reg-email").value.trim().toLowerCase();
+    const password = document.getElementById("reg-pass").value;
+    const error = document.getElementById("email-otp-status");
+    error.classList.remove("text-emerald-600", "text-gray-600");
+    error.classList.add("text-red-600");
+
+    if (verifiedRegistrationEmail !== email) {
+        error.textContent = "Verify your email address before creating an account.";
+        return;
+    }
+
+    if (password !== document.getElementById("reg-confirm").value) {
+        error.textContent = "Passwords do not match.";
+        return;
+    }
+
+    try {
+        const result = await apiRequest("/api/customer/register", {
+            method: "POST",
+            body: {
+                name: document.getElementById("reg-name").value.trim(),
+                phone: document.getElementById("reg-phone").value.trim(),
+                email,
+                password
+            }
+        });
+
+        alert(result.message + " Please sign in.");
+        verifiedRegistrationEmail = null;
+        pendingAuthToken = null;
+        pendingRegistrationRefreshToken = null;
+        error.textContent = "";
+        document.getElementById("reg-pass").value = "";
+        document.getElementById("reg-confirm").value = "";
+        toggleAuthMode("signin");
+        document.getElementById("auth-phone").value =
+            document.getElementById("reg-phone").value.trim();
+    } catch (err) {
+        error.textContent = err.message;
+        error.classList.remove("hidden");
+    }
+}
+
+        function completeAuth() {
+            document.getElementById('header-auth-text').innerText = state.userRole === 'customer' ? `+91 ${state.userPhone.slice(-4)}` : state.userRole.toUpperCase();
+            closeAuthModal();
+            updateNavigationVisibility();
+            renderAdminMenu();
+            switchPortal(state.userRole);
+            renderMenuGrid();
+        }
+
+        function updateNavigationVisibility() {
+            const navTabs = document.getElementById('navTabsContainer');
+            const tabOnline = document.getElementById('tabOnline');
+            const tabStaff = document.getElementById('tabStaff');
+            const tabAdmin = document.getElementById('tabAdmin');
+            const trackerBtn = document.getElementById('header-track-btn');
+            document.getElementById('admin-add-item-btn').classList.toggle('hidden', state.userRole !== 'admin');
+            if (state.userRole !== 'admin') closeDishModal();
+            if (!state.userRole) { navTabs.classList.add('hidden'); trackerBtn.classList.add('hidden'); return; }
+            navTabs.classList.remove('hidden'); tabOnline.classList.remove('hidden');
+            if (state.userRole === 'staff' || state.userRole === 'admin') tabStaff.classList.remove('hidden');
+            if (state.userRole === 'admin') tabAdmin.classList.remove('hidden');
+            trackerBtn.classList.toggle('hidden', state.userRole !== 'customer' || !state.activeCustomerOrder);
+        }
+
+        function switchPortal(portal) {
+            if (!state.userRole && portal !== 'customer') { openAuthModal(); return; }
+            if (portal === 'admin' && state.userRole !== 'admin') return;
+            if (state.userRole === 'customer' && portal !== 'customer') return;
+            if (state.userRole === 'staff' && portal === 'admin') return;
+            state.activePortal = portal;
+            document.getElementById('customer-portal').classList.add('hidden');
+            document.getElementById('staff-portal').classList.add('hidden');
+            document.getElementById('admin-portal').classList.add('hidden');
+            document.getElementById(`${portal}-portal`).classList.remove('hidden');
+            if (portal === 'admin') renderAdminDashboard();
+            document.getElementById('tabOnline').className = portal === 'customer' ? "px-5 py-2.5 rounded-xl text-sm font-semibold bg-brand-red text-white flex items-center gap-2" : "px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white/50 flex items-center gap-2";
+            document.getElementById('tabStaff').className = portal === 'staff' ? "px-5 py-2.5 rounded-xl text-sm font-semibold bg-brand-red text-white flex items-center gap-2" : "px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white/50 flex items-center gap-2";
+            document.getElementById('tabAdmin').className = portal === 'admin' ? "px-5 py-2.5 rounded-xl text-sm font-semibold bg-brand-red text-white flex items-center gap-2" : "px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white/50 flex items-center gap-2";
+        }
+
+        // --- CUSTOMER FLOW ---
+        function renderCategoryCarousel() {
+            const container = document.getElementById('category-visual-list');
+            const menuCategories = [...new Set(state.menu.map(item => item.category))];
+            const visibleCategories = menuCategories.map(name => ({
+                name,
+                img: state.categories.find(category => category.name === name)?.img ||
+                    state.menu.find(item => item.category === name)?.image
+            }));
+            container.innerHTML = visibleCategories.map(cat => `
+                <div onclick="selectCategory(decodeURIComponent('${encodeURIComponent(cat.name).replace(/'/g, '%27')}'))" class="flex-shrink-0 cursor-pointer flex flex-col items-center group px-4">
+                    <div class="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-brand-red p-1 bg-white shadow-md group-hover:scale-110 transition transform duration-300">
+                        <img src="${escapeHtml(cat.img)}" alt="${escapeHtml(cat.name)}" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <span class="text-sm md:text-lg font-black text-gray-800 mt-3 text-center group-hover:text-brand-red transition-colors">${escapeHtml(cat.name)}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderCategoryPills() {
+            const container = document.getElementById('category-pills');
+            const categories = ['All Items', ...new Set(state.menu.map(item => item.category))];
+            container.innerHTML = categories.map(name => `
+                <button onclick="selectCategory(decodeURIComponent('${encodeURIComponent(name).replace(/'/g, '%27')}'))" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${state.selectedCategory === name ? 'bg-brand-red text-white' : 'bg-white text-gray-700 border'}">${escapeHtml(name)}</button>
+            `).join('');
+        }
+
+        function selectCategory(name) { state.selectedCategory = name; renderCategoryPills(); renderMenuGrid(); }
+
+        function renderMenuGrid() {
+            const container = document.getElementById('menu-grid');
+            const search = document.getElementById('menu-search-input').value.trim().toLowerCase();
+            const filtered = state.menu.filter(item => (state.selectedCategory === 'All Items' || item.category === state.selectedCategory) && (item.name.toLowerCase().includes(search)));
+            const itemsByCategory = new Map();
+            filtered.forEach(item => {
+                if (!itemsByCategory.has(item.category)) itemsByCategory.set(item.category, []);
+                itemsByCategory.get(item.category).push(item);
+            });
+
+            container.innerHTML = itemsByCategory.size ? [...itemsByCategory].map(([category, items]) => `
+                <section class="menu-category-section" data-category="${escapeHtml(category)}">
+                    <div class="flex items-center justify-between mb-4 border-b border-gray-200 pb-3">
+                        <h4 class="text-xl md:text-2xl font-black text-gray-900">${escapeHtml(category)}</h4>
+                        <span class="text-xs font-bold text-gray-500">${items.length} ${items.length === 1 ? 'item' : 'items'}</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        ${items.map(item => `
+                            <div class="bg-white rounded-3xl overflow-hidden border shadow-sm hover:shadow-xl transition flex flex-col justify-between">
+                                <div>
+                                    <div class="relative h-44 overflow-hidden">
+                                        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                                        <span class="absolute top-3 right-3 bg-stone-900/80 text-white font-extrabold text-xs px-2 py-1 rounded-full">₹${Number(item.price)}</span>
+                                    </div>
+                                    <div class="p-4">
+                                        <h5 class="font-extrabold text-gray-900">${escapeHtml(item.name)}</h5>
+                                        <p class="text-xs text-gray-500 line-clamp-2">${escapeHtml(item.description)}</p>
+                                    </div>
+                                </div>
+                                <div class="p-4 pt-0">
+                                    <button onclick="addToCart(${Number(item.id)})" class="w-full bg-slate-800 text-white font-bold py-2 rounded-2xl text-xs hover:bg-black transition flex items-center justify-center gap-1">
+                                        <i class="fa-solid ${state.userRole ? 'fa-plus' : 'fa-lock'} text-[10px]"></i> ${state.userRole ? 'Add to Order' : 'Sign in to Order'}
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `).join('') : `
+                <p class="col-span-full py-10 text-center text-sm text-gray-500">
+                    ${state.menu.length ? 'No menu items match your search.' : 'Menu items will appear here soon.'}
+                </p>
+            `;
+        }
+
+        function filterMenuSearch() { renderMenuGrid(); }
+
+        function addToCart(id) {
+            if (!state.userRole) {
+                openAuthModal();
+                return;
+            }
+            const dish = state.menu.find(m => m.id === id);
+            if (!dish) return;
+            const existing = state.cart.find(c => c.id === id);
+            if (existing) { existing.qty++; } else { state.cart.push({ ...dish, qty: 1 }); }
+            updateCartUI();
+            openCart();
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cart-items-list');
+            const orderBtn = document.querySelector('#cart-drawer button[onclick="proceedToAddressStep()"]');
+            const basketCount = state.cart.reduce((count, item) => count + item.qty, 0);
+            document.getElementById('header-basket-count').innerText = basketCount;
+            document.getElementById('header-basket-btn').setAttribute('aria-label', `Open basket, ${basketCount} item${basketCount === 1 ? '' : 's'}`);
+            if (state.cart.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-400 py-12">Basket is empty.</p>`;
+                if(orderBtn) {
+                    orderBtn.className = "w-full bg-gray-400 text-gray-200 font-extrabold py-3 rounded-xl text-sm cursor-not-allowed";
+                    orderBtn.innerText = "Add Items to Order";
+                }
+                document.getElementById('cart-subtotal').innerText = '₹0.00';
+                document.getElementById('cart-tax').innerText = '₹0.00';
+                document.getElementById('cart-grand-total').innerText = '₹0.00';
+                document.getElementById('cart-delivery').innerText =
+                    state.restaurantSettings ? formatRupees(Number(state.restaurantSettings.delivery_fee)) : '—';
+                return;
+            }
+            list.innerHTML = state.cart.map(item => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border">
+                    <div class="flex items-center space-x-3">
+                        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="w-12 h-12 object-cover rounded-xl">
+                        <div><p class="font-bold text-xs">${escapeHtml(item.name)}</p><p class="text-xs text-gray-400">₹${item.price}</p></div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="changeCartQty(${item.id}, -1)" class="w-6 h-6 bg-white border rounded-lg">-</button>
+                        <span class="text-xs font-bold">${item.qty}</span>
+                        <button onclick="changeCartQty(${item.id}, 1)" class="w-6 h-6 bg-white border rounded-lg">+</button>
+                    </div>
+                </div>
+            `).join('');
+            if(orderBtn) {
+                orderBtn.className = "w-full bg-brand-red hover:bg-brand-darkRed text-white font-extrabold py-3 rounded-xl text-sm transition";
+                orderBtn.innerText = "Place Order";
+            }
+            const totals = calculateCartTotals();
+            if (!totals) {
+                document.getElementById('cart-subtotal').innerText = '—';
+                document.getElementById('cart-tax').innerText = '—';
+                document.getElementById('cart-delivery').innerText = '—';
+                document.getElementById('cart-grand-total').innerText = '—';
+                return;
+            }
+            const taxPercent = Number(state.restaurantSettings.tax_rate) * 100;
+            document.getElementById('cart-tax-label').innerText =
+                `GST (${Number.isInteger(taxPercent) ? taxPercent : taxPercent.toFixed(2)}%)`;
+            document.getElementById('cart-subtotal').innerText = formatRupees(totals.subtotal);
+            document.getElementById('cart-tax').innerText = formatRupees(totals.tax);
+            document.getElementById('cart-delivery').innerText = formatRupees(totals.delivery);
+            document.getElementById('cart-grand-total').innerText = formatRupees(totals.total);
+        }
+
+        function changeCartQty(id, delta) {
+            const item = state.cart.find(c => c.id === id);
+            if (item) { item.qty += delta; if (item.qty <= 0) state.cart = state.cart.filter(c => c.id !== id); }
+            updateCartUI();
+        }
+
+        function calculateCartTotals() {
+            const settings = state.restaurantSettings;
+            if (
+                !settings ||
+                !Number.isFinite(Number(settings.delivery_fee)) ||
+                !Number.isFinite(Number(settings.tax_rate))
+            ) return null;
+            const subtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+            const tax = subtotal * Number(settings.tax_rate);
+            const delivery = Number(settings.delivery_fee);
+            return { subtotal, tax, delivery, total: Math.round(subtotal + tax + delivery) };
+        }
+
+        function formatRupees(amount) {
+            return `₹${Number(amount).toFixed(2)}`;
+        }
+
+        function openCart() {
+            if (!state.userRole) {
+                openAuthModal();
+                return;
+            }
+            document.getElementById('cart-drawer')?.classList.remove('hidden');
+        }
+        function closeCart() { document.getElementById('cart-drawer')?.classList.add('hidden'); }
+
+        function proceedToAddressStep() {
+            if (!state.userRole) { openAuthModal(); return; }
+            if (state.cart.length === 0) { alert("Your basket is empty! Please add items first."); return; }
+            if (!calculateCartTotals()) { alert("Restaurant pricing could not be loaded. Please try again."); return; }
+            closeCart();
+            openAddressModal(true);
+        }
+
+        function openAddressModal(isCheckout = false) {
+            state.isCheckoutFlow = isCheckout;
+            state.pendingGpsLocation = null;
+            document.getElementById('address-modal').classList.remove('hidden'); 
+        }
+        function closeAddressModal() { document.getElementById('address-modal').classList.add('hidden'); }
+
+       
+async function fetchLiveGPSLocation() {
+    const button = document.querySelector(
+        '#address-modal button[onclick="fetchLiveGPSLocation()"]'
+    );
+
+    if (!navigator.geolocation) {
+        alert("GPS is not supported by this browser. Please enter your address manually.");
+        return;
+    }
+
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = "Getting your location...";
+    }
+
+    const setStatus = (message) => {
+        let status = document.getElementById("gps-location-status");
+
+        if (!status) {
+            status = document.createElement("p");
+            status.id = "gps-location-status";
+            status.className = "text-xs text-center text-gray-600 mb-3";
+            button?.insertAdjacentElement("afterend", status);
+        }
+
+        status.textContent = message;
+    };
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            try {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                const accuracy = position.coords.accuracy;
+                state.pendingGpsLocation = {
+                    latitude,
+                    longitude,
+                    accuracy,
+                    capturedAt: new Date(position.timestamp).toISOString()
+                };
+
+                setStatus(`GPS pin captured (about ±${Math.round(accuracy)} m). Finding your street address...`);
+
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&addressdetails=1`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Address lookup failed.");
+                }
+
+                const result = await response.json();
+                const a = result.address || {};
+
+                const house = [
+                    a.house_number,
+                    a.road || a.pedestrian || a.residential
+                ].filter(Boolean).join(", ");
+
+                const area =
+                    a.neighbourhood ||
+                    a.suburb ||
+                    a.quarter ||
+                    a.village ||
+                    a.town ||
+                    a.city_district ||
+                    "";
+
+                const city =
+                    a.city ||
+                    a.town ||
+                    a.municipality ||
+                    a.village ||
+                    a.county ||
+                    "";
+
+                const pin = a.postcode || "";
+
+                document.getElementById("loc-house").value = house;
+                document.getElementById("loc-area").value = area;
+                document.getElementById("loc-city").value = city;
+                document.getElementById("loc-pin").value = pin;
+
+                // Keep precise coordinates for the order.
+                state.deliveryAddress = {
+                    ...(state.deliveryAddress || {}),
+                    location: state.pendingGpsLocation,
+                    gpsAddress: result.display_name || ""
+                };
+
+                setStatus(
+                    result.display_name
+                        ? `GPS accuracy: about ±${Math.round(accuracy)} m. Address found: ${result.display_name}. Please check the fields and confirm.`
+                        : `GPS accuracy: about ±${Math.round(accuracy)} m. The street address could not be identified. Please enter it manually.`
+                );
+
+                // Do not skip address confirmation or open payment automatically.
+            } catch (error) {
+                console.error("GPS address lookup error:", error);
+                setStatus(
+                    `GPS pin captured${state.pendingGpsLocation ? ` (about ±${Math.round(state.pendingGpsLocation.accuracy)} m)` : ""}, but the address lookup failed. Please enter your address manually.`
+                );
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML =
+                        '<i class="fa-solid fa-crosshairs text-emerald-600"></i> Use Current GPS Location';
+                }
+            }
+        },
+        (error) => {
+            const messages = {
+                1: "Location permission was denied. Allow location access or enter your address manually.",
+                2: "Your location is unavailable. Please try again or enter your address manually.",
+                3: "GPS timed out. Please try again."
+            };
+
+            setStatus(messages[error.code] || "Could not get your location.");
+
+            if (button) {
+                button.disabled = false;
+                button.innerHTML =
+                    '<i class="fa-solid fa-crosshairs text-emerald-600"></i> Use Current GPS Location';
+            }
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+}
+
+
+        function confirmManualAddress() {
+            const name = document.getElementById('loc-name').value;
+            const phone = document.getElementById('loc-phone').value;
+            const house = document.getElementById('loc-house').value;
+            const area = document.getElementById('loc-area').value;
+            const city = document.getElementById('loc-city').value;
+            const pin = document.getElementById('loc-pin').value;
+            const landmark = document.getElementById('loc-landmark').value;
+
+            if (!name || !phone || !house || !area || !city || !pin) {
+                alert("Please fill in all required address fields.");
+                return;
+            }
+
+            state.deliveryAddress = {
+                name,
+                phone,
+                house,
+                street: landmark,
+                area,
+                city,
+                pin,
+                location: state.pendingGpsLocation
+            };
+            state.pendingGpsLocation = null;
+            updateHeroAddress();
+            if (state.isCheckoutFlow) openPaymentModal(); else closeAddressModal();
+        }
+
+        function updateHeroAddress() {
+            if (state.deliveryAddress) {
+                document.getElementById('hero-delivery-location').innerText = `${state.deliveryAddress.area}, ${state.deliveryAddress.city}`;
+            } else {
+                document.getElementById('hero-delivery-location').innerText = "Select Address";
+            }
+        }
+
+        function openPaymentModal() {
+            const totals = calculateCartTotals();
+            if (!totals) {
+                alert("Restaurant pricing could not be loaded. Please try again.");
+                return;
+            }
+            document.getElementById('paymentModalTotal').innerText = formatRupees(totals.total);
+            selectPaymentOption(state.paymentMethod);
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
+
+        function selectPaymentOption(mode) {
+            state.paymentMethod = mode;
+            document.getElementById('payment-upi-box').classList.toggle('hidden', mode === 'cod');
+            document.getElementById('payment-cod-box').classList.toggle('hidden', mode === 'upi');
+            document.getElementById('opt-upi').className = mode === 'upi' ? "p-3.5 rounded-2xl border-2 border-brand-red bg-red-50 text-brand-red font-bold text-sm flex flex-col items-center gap-1" : "p-3.5 rounded-2xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm flex flex-col items-center gap-1";
+            document.getElementById('opt-cod').className = mode === 'cod' ? "p-3.5 rounded-2xl border-2 border-brand-red bg-red-50 text-brand-red font-bold text-sm flex flex-col items-center gap-1" : "p-3.5 rounded-2xl border-2 border-gray-200 bg-white text-gray-600 font-bold text-sm flex flex-col items-center gap-1";
+            document.getElementById('pay-confirm-btn').innerText = mode === 'cod'
+                ? 'Place Cash on Delivery Order'
+                : 'Pay with Razorpay & Place Order';
+        }
+
+        async function verifyAndFinalizeOrder() {
+            const btn = document.getElementById('pay-confirm-btn');
+            if (!state.userRole || !state.deliveryAddress || state.cart.length === 0) {
+                alert("Sign in, add items, and provide a delivery address before placing your order.");
+                return;
+            }
+            if (state.pendingRazorpayPayment) {
+                await finalizeOrderAndTrack(state.pendingRazorpayPayment);
+                return;
+            }
+            if (state.paymentMethod === 'cod') {
+                await finalizeOrderAndTrack();
+                return;
+            }
+            if (typeof window.Razorpay !== 'function') {
+                alert("Secure Razorpay checkout could not be loaded. Please refresh and try again.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Preparing secure payment…';
+            try {
+                const paymentOrder = await apiRequest('/api/payments/razorpay/orders', {
+                    method: 'POST',
+                    body: { items: state.cart.map(item => ({ menuItemId: item.id, qty: item.qty })) }
+                });
+                document.getElementById('paymentModalTotal').innerText =
+                    formatRupees(Number(paymentOrder.amount) / 100);
+                const checkout = new window.Razorpay({
+                    key: paymentOrder.keyId,
+                    amount: paymentOrder.amount,
+                    currency: paymentOrder.currency,
+                    name: state.restaurantSettings?.restaurant_name || 'Sri Madhuram Family Restaurant',
+                    description: 'Restaurant order',
+                    order_id: paymentOrder.razorpayOrderId,
+                    prefill: {
+                        name: state.deliveryAddress.name,
+                        contact: state.deliveryAddress.phone
+                    },
+                    handler: async response => {
+                        state.pendingRazorpayPayment = {
+                            orderId: response.razorpay_order_id,
+                            paymentId: response.razorpay_payment_id,
+                            signature: response.razorpay_signature
+                        };
+                        await finalizeOrderAndTrack(state.pendingRazorpayPayment);
+                    },
+                    modal: {
+                        ondismiss: () => {
+                            btn.disabled = false;
+                            btn.innerText = 'Pay with Razorpay & Place Order';
+                        }
+                    }
+                });
+                checkout.on('payment.failed', response => {
+                    btn.disabled = false;
+                    btn.innerText = 'Pay with Razorpay & Place Order';
+                    alert(response.error?.description || 'Razorpay could not confirm the payment.');
+                });
+                checkout.open();
+            } catch (error) {
+                console.error('Unable to prepare Razorpay checkout:', error);
+                btn.disabled = false;
+                btn.innerText = 'Pay with Razorpay & Place Order';
+                alert(`Secure payment could not be started: ${error.message}`);
+            }
+        }
+
+        async function finalizeOrderAndTrack(razorpayPayment = null) {
+            const fullAddressStr = `${state.deliveryAddress.house}, ${state.deliveryAddress.street}, ${state.deliveryAddress.area}, ${state.deliveryAddress.city} - ${state.deliveryAddress.pin}`;
+            let result;
+            try {
+                result = await apiRequest('/api/orders', {
+                    method: 'POST',
+                    body: {
+                        address: fullAddressStr,
+                        name: state.deliveryAddress.name,
+                        paymentMethod: state.paymentMethod,
+                        phone: state.deliveryAddress.phone,
+                        location: state.deliveryAddress.location,
+                        items: state.cart.map(item => ({ menuItemId: item.id, qty: item.qty })),
+                        ...(razorpayPayment ? { razorpayPayment } : {})
+                    }
+                });
+            } catch (error) {
+                console.error('Unable to place order:', error);
+                if (razorpayPayment) {
+                    document.getElementById('pay-confirm-btn').disabled = false;
+                    document.getElementById('pay-confirm-btn').innerText = 'Retry Order Confirmation';
+                    alert(`Payment was received, but the order could not be confirmed: ${error.message}. Keep payment ID ${razorpayPayment.paymentId} and contact the restaurant if retrying fails.`);
+                } else {
+                    alert(`Your order could not be placed: ${error.message}`);
+                }
+                return;
+            }
+            state.pendingRazorpayPayment = null;
+            state.activeCustomerOrder = result.order;
+            state.ordersList.unshift(result.order);
+            state.cart = []; updateCartUI();
+            closePaymentModal(); renderAdminDashboard();
+            updateNavigationVisibility();
+            toggleOrderTrackerModal(true);
+            state.isCheckoutFlow = false;
+        }
+
+        function toggleOrderTrackerModal(show = false) {
+            const modal = document.getElementById('trackOrderModal');
+            if (show) { modal.classList.remove('hidden'); updateTrackerUI(); } else { modal.classList.add('hidden'); }
+        }
+
+        function updateTrackerUI() {
+            const order = state.activeCustomerOrder;
+            if (!order) return;
+            const stepper = document.getElementById('trackerStepper');
+            const badge = document.getElementById('trackerStatusBadge');
+            const stages = [
+                { status: 'Approved', icon: 'fa-check', color: 'bg-emerald-600', text: 'Order Approved' },
+                { status: 'Cooking', icon: 'fa-fire', color: 'bg-amber-500', text: 'Chef is Cooking' },
+                { status: 'Out for Delivery', icon: 'fa-motorcycle', color: 'bg-blue-500', text: 'Out for Delivery' },
+                { status: 'Delivered', icon: 'fa-house-chimney', color: 'bg-green-600', text: 'Order Delivered!' }
+            ];
+            const currentStageIndex = stages.findIndex(s => s.status === order.status);
+            if (order.status === 'Cancelled') {
+                badge.innerText = 'Cancelled';
+                badge.className = 'text-xs text-red-600 font-bold';
+                stepper.innerHTML = '<p class="text-xs font-bold text-red-700">Order cancelled</p>';
+            } else if (order.status === 'Pending') {
+                badge.innerText = "Awaiting Approval"; badge.className = "text-xs text-amber-600 font-bold";
+                stepper.innerHTML = `<div class="flex items-start space-x-3"><div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs animate-pulse">1</div><div><p class="text-xs font-bold text-gray-800">Pending Approval</p><p class="text-[10px] text-gray-400">Waiting for the restaurant manager to confirm</p></div></div>`;
+            } else {
+                badge.innerText = order.status; badge.className = "text-xs text-emerald-600 font-bold";
+                stepper.innerHTML = stages.map((stage, idx) => {
+                    const isCompleted = idx <= currentStageIndex;
+                    const isCurrent = idx === currentStageIndex;
+                    return `<div class="flex items-start space-x-3 ${!isCompleted ? 'opacity-40' : ''}">
+                        <div class="w-6 h-6 rounded-full ${isCompleted ? stage.color : 'bg-gray-300'} text-white flex items-center justify-center text-xs font-bold mt-0.5 ${isCurrent ? 'animate-bounce' : ''}"><i class="fa-solid ${stage.icon}"></i></div>
+                        <div><p class="text-xs font-bold ${isCompleted ? 'text-gray-800' : 'text-gray-500'}">${stage.text}</p></div>
+                    </div>`;
+                }).join('');
+            }
+            document.getElementById('trackerOrderId').innerText = `Order #${order.id}`;
+            document.getElementById('trackerTotal').innerText = `₹${order.total}`;
+            document.getElementById('trackerAddress').innerText = order.address;
+            document.getElementById('trackerPaymentMode').innerText = order.paymentMethod.toUpperCase();
+            const cancelButton = document.getElementById('cancel-order-btn');
+            const canCancel = ['Pending', 'Approved', 'Cooking', 'Out for Delivery'].includes(order.status);
+            cancelButton.classList.toggle('hidden', !canCancel);
+            const cancellationDetails = document.getElementById('tracker-cancellation-details');
+            cancellationDetails.classList.toggle('hidden', order.status !== 'Cancelled');
+            if (order.status === 'Cancelled') {
+                cancellationDetails.innerHTML = `
+                    <p class="font-black text-gray-900">Cancellation details</p>
+                    <p>Policy: ${escapeHtml(order.cancellationPolicy === 'restaurant_stage_full_refund' ? 'Restaurant stage — full refund' : 'Delivery stage — deductions applied')}</p>
+                    <p>Food-making deduction: ₹${Number(order.foodMakingDeduction || 0).toFixed(2)}</p>
+                    <p>Delivery deduction: ₹${Number(order.deliveryDeduction || 0).toFixed(2)}</p>
+                    <p>Refund amount: ₹${Number(order.refundAmount || 0).toFixed(2)}</p>
+                    <p>Refund status: ${escapeHtml(order.refundStatus || 'not_requested')}</p>
+                    <p>Cancelled: ${escapeHtml(order.cancelledAt ? new Date(order.cancelledAt).toLocaleString() : '—')}</p>
+                `;
+            }
+        }
+
+        async function openCancellationModal() {
+            const order = state.activeCustomerOrder;
+            if (!order || !['Pending', 'Approved', 'Cooking', 'Out for Delivery'].includes(order.status)) return;
+            const modal = document.getElementById('cancel-order-modal');
+            const message = document.getElementById('cancel-request-message');
+            const confirmButton = document.getElementById('confirm-cancel-order-btn');
+            modal.classList.remove('hidden');
+            message.textContent = '';
+            confirmButton.disabled = true;
+            document.getElementById('cancel-reason').value = '';
+            document.getElementById('cancel-preview-policy').textContent =
+                'Loading the applicable policy and refund calculation…';
+            document.getElementById('cancel-preview-amounts').textContent = '';
+            state.pendingCancellationPreview = null;
+            try {
+                const preview = await apiRequest(
+                    `/api/customer/orders/${encodeURIComponent(order.id)}/cancellation-preview`
+                );
+                state.pendingCancellationPreview = preview;
+                document.getElementById('cancel-preview-policy').textContent =
+                    preview.stage === 'restaurant'
+                        ? 'Policy 1 – Cancellation at Restaurant Stage: Refund amount = 100% of the amount paid.'
+                        : 'Policy 2 – Cancellation at Delivery Stage: Refund amount = Amount paid - Food-making charges - Delivery charges.';
+                const rows = preview.stage === 'restaurant'
+                    ? [
+                        ['Amount paid', preview.paidAmount],
+                        ['Refund (100% of amount paid)', preview.refundAmount]
+                    ]
+                    : [
+                        ['Amount paid', preview.paidAmount],
+                        ['Food-making deduction (10% of food subtotal)', preview.foodMakingDeduction],
+                        ['Delivery deduction', preview.deliveryDeduction],
+                        ['Refund amount', preview.refundAmount]
+                    ];
+                document.getElementById('cancel-preview-amounts').innerHTML = rows.map(([label, amount]) =>
+                    `<div class="flex justify-between gap-3"><span>${escapeHtml(label)}</span><strong>₹${Number(amount).toFixed(2)}</strong></div>`
+                ).join('');
+                confirmButton.disabled = false;
+            } catch (error) {
+                message.textContent = error.message;
+                document.getElementById('cancel-preview-policy').textContent =
+                    'The cancellation calculation could not be loaded.';
+            }
+        }
+
+        function closeCancellationModal() {
+            document.getElementById('cancel-order-modal').classList.add('hidden');
+        }
+
+        async function confirmCancelOrder() {
+            const order = state.activeCustomerOrder;
+            const reason = document.getElementById('cancel-reason').value.trim();
+            const button = document.getElementById('confirm-cancel-order-btn');
+            const message = document.getElementById('cancel-request-message');
+            if (!order || !state.pendingCancellationPreview || !reason) {
+                message.textContent = 'Enter a cancellation reason before confirming.';
+                return;
+            }
+            button.disabled = true;
+            message.textContent = '';
+            try {
+                const result = await apiRequest(
+                    `/api/customer/orders/${encodeURIComponent(order.id)}/cancel`,
+                    {
+                        method: 'POST',
+                        body: {
+                            reason,
+                            expectedStatus: state.pendingCancellationPreview.status
+                        }
+                    }
+                );
+                state.activeCustomerOrder = result.order;
+                const orderIndex = state.ordersList.findIndex(item => item.id === order.id);
+                if (orderIndex >= 0) state.ordersList[orderIndex] = result.order;
+                closeCancellationModal();
+                updateTrackerUI();
+                renderAdminDashboard();
+                if (result.refundMessage) alert(result.refundMessage);
+            } catch (error) {
+                message.textContent = error.message;
+                button.disabled = false;
+            }
+        }
+
+        // --- STAFF & ADMIN (Preserved) ---
+        function switchStaffTab(view) {
+            document.getElementById('staff-tables-view').classList.toggle('hidden', view !== 'tables');
+            document.getElementById('staff-kds-view').classList.toggle('hidden', view !== 'kds');
+            document.getElementById('staff-tab-tables').className = view === 'tables' ? "px-4 py-2 rounded-xl text-sm font-bold bg-brand-red text-white" : "px-4 py-2 rounded-xl text-sm font-bold bg-gray-200 text-gray-700";
+            document.getElementById('staff-tab-kds').className = view === 'kds' ? "px-4 py-2 rounded-xl text-sm font-bold bg-brand-red text-white" : "px-4 py-2 rounded-xl text-sm font-bold bg-gray-200 text-gray-700";
+        }
+        function renderTablesGrid() {
+            const container = document.getElementById('tables-grid');
+            container.innerHTML = state.tablesData.map(t => `
+                <div onclick="openTableBillingModal(${t.id})" class="cursor-pointer p-4 rounded-2xl border-2 ${t.status === 'occupied' ? 'bg-red-50 border-red-300 text-red-900' : 'bg-emerald-50 border-emerald-300 text-emerald-900'} transition transform hover:scale-105">
+                    <div class="flex justify-between mb-2"><span class="font-extrabold">T-${t.id}</span><span class="text-[10px] font-bold uppercase">${t.status}</span></div>
+                    <p class="text-xs text-gray-600">${t.seats} Seats</p>
+                    <p class="text-sm font-black text-brand-red">₹${t.items.reduce((s,i)=>s+(i.price*i.qty),0)}</p>
+                </div>`).join('');
+        }
+        function renderKDSOrders() {
+            const container = document.getElementById('kds-orders-container');
+            container.innerHTML = state.kdsOrders.map((order, idx) => `
+                <div class="bg-white p-4 rounded-2xl border shadow-sm">
+                    <div class="flex justify-between border-b pb-2 mb-2">
+                        <span class="font-bold text-sm">#${order.id} - ${order.title}</span>
+                        <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-1 rounded">${order.status}</span>
+                    </div>
+                    <ul class="text-xs space-y-1 mb-4">${order.items.map(i => `<li>• ${i}</li>`).join('')}</ul>
+                    <button onclick="updateKDSStatus(${idx})" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs">Mark Ready</button>
+                </div>`).join('');
+        }
+        function updateKDSStatus(idx) { state.kdsOrders.splice(idx, 1); renderKDSOrders(); renderAdminDashboard(); }
+        function openTableBillingModal(id) {
+            state.selectedTableId = id;
+            const table = state.tablesData.find(t => t.id === id);
+            document.getElementById('modal-table-badge').innerText = `T-${id}`;
+            document.getElementById('modal-table-subtitle').innerText = `Seats: ${table.seats} | Status: ${table.status}`;
+            document.getElementById('table-add-dish-select').innerHTML = state.menu.map(m => `<option value="${m.id}">${m.name} (₹${m.price})</option>`).join('');
+            renderTableItems();
+            document.getElementById('table-billing-modal').classList.remove('hidden');
+        }
+        function renderTableItems() {
+            const table = state.tablesData.find(t => t.id === state.selectedTableId);
+            const container = document.getElementById('table-order-items-list');
+            container.innerHTML = table.items.map((item, idx) => `<div class="flex justify-between"><span>${item.name} x${item.qty}</span><span class="font-bold">₹${item.price * item.qty}</span></div>`).join('');
+            document.getElementById('table-total-bill-text').innerText = `₹${table.items.reduce((s,i)=>s+(i.price*i.qty),0)}`;
+        }
+        function addItemToSelectedTable() {
+            const id = parseInt(document.getElementById('table-add-dish-select').value);
+            const dish = state.menu.find(m => m.id === id);
+            const table = state.tablesData.find(t => t.id === state.selectedTableId);
+            const existing = table.items.find(i => i.name === dish.name);
+            if (existing) { existing.qty++; } else { table.items.push({...dish, qty: 1}); }
+            table.status = 'occupied';
+            state.kdsOrders.push({ id: Math.floor(Math.random() * 900), title: `T-${table.id} Order`, items: [`${dish.name} x1`], status: 'Cooking' });
+            renderTableItems(); renderTablesGrid(); renderKDSOrders(); renderAdminDashboard();
+        }
+        function saveTableOrder() {
+            const table = state.tablesData.find(t => t.id === state.selectedTableId);
+            if (table.items.length === 0) { alert("No items to save."); return; }
+            alert(`Order for Table ${table.id} has been saved in the system.`);
+            renderTablesGrid();
+        }
+        function settleAndClearTable() {
+            const table = state.tablesData.find(t => t.id === state.selectedTableId);
+            table.items = []; table.status = 'available';
+            renderTablesGrid(); renderAdminDashboard(); closeTableBillingModal();
+        }
+        function closeTableBillingModal() { document.getElementById('table-billing-modal').classList.add('hidden'); }
+        function printTableReceipt() {
+            const table = state.tablesData.find(t => t.id === state.selectedTableId);
+            document.getElementById('receipt-header-info').innerHTML = `Date: ${new Date().toLocaleDateString()} | Table: #${table.id}`;
+            document.getElementById('receipt-items-list').innerHTML = table.items.map(i => `<div style="display:flex;justify-content:space-between;"><span>${i.name} x${i.qty}</span><span>₹${i.price*i.qty}</span></div>`).join('');
+            document.getElementById('receipt-total-info').innerText = `Grand Total: ₹${table.items.reduce((s,i)=>s+(i.price*i.qty),0)}`;
+            window.print();
+        }
+        function switchAdminTab(tab) {
+            if (!isAdmin() || !['stats', 'menu', 'posters'].includes(tab)) return;
+            document.getElementById('admin-stats-view').classList.toggle('hidden', tab !== 'stats');
+            document.getElementById('admin-menu-view').classList.toggle('hidden', tab !== 'menu');
+            document.getElementById('admin-posters-view').classList.toggle('hidden', tab !== 'posters');
+            document.getElementById('admin-dashboard-controls').classList.toggle('hidden', tab !== 'stats');
+            ['stats', 'menu', 'posters'].forEach(name => {
+                document.getElementById(`adm-tab-${name}`).className = tab === name
+                    ? "px-4 py-2 rounded-xl text-xs font-bold bg-purple-900 text-white"
+                    : "px-4 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-700";
+            });
+        }
+
+        function renderAdminPosters() {
+            const container = document.getElementById('admin-posters-list');
+            if (!container) return;
+            container.innerHTML = state.posters.length
+                ? state.posters.map(poster => `
+                    <article class="restaurant-updates-card bg-white rounded-2xl border overflow-hidden">
+                        <img src="${escapeHtml(poster.image)}" alt="${escapeHtml(poster.title)}" class="w-full h-40 object-cover">
+                        <div class="p-4 flex items-center justify-between gap-3">
+                            <h4 class="font-bold text-sm text-gray-900">${escapeHtml(poster.title)}</h4>
+                            <button type="button" onclick="deletePoster(${poster.id})" class="shrink-0 text-red-600 hover:text-red-800 text-xs font-bold" aria-label="Delete ${escapeHtml(poster.title)}">
+                                <i class="fa-solid fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </article>`).join('')
+                : '<p class="text-sm text-gray-500">No promotional posters added yet.</p>';
+        }
+
+        function renderUpdates() {
+            const section = document.getElementById('customer-posters');
+            const container = document.getElementById('customer-posters-list');
+            if (!section || !container) return;
+            section.classList.toggle('hidden', state.posters.length === 0);
+            container.innerHTML = state.posters.map(poster => `
+                <article class="restaurant-updates-card bg-white rounded-2xl border shadow-sm overflow-hidden">
+                    <img src="${escapeHtml(poster.image)}" alt="${escapeHtml(poster.title)}" class="w-full h-48 object-cover">
+                    <div class="p-4"><h3 class="font-bold text-gray-900">${escapeHtml(poster.title)}</h3></div>
+                </article>`).join('');
+        }
+
+        function updatePosterPreview() {
+            const title = document.getElementById('poster-title').value.trim();
+            const image = document.getElementById('poster-image').value.trim();
+            const previewWrap = document.getElementById('poster-form-preview-wrap');
+            const previewImage = document.getElementById('poster-form-preview-image');
+            if (!title && !image) {
+                previewWrap.classList.add('hidden');
+                previewImage.removeAttribute('src');
+                return;
+            }
+            document.getElementById('poster-form-preview-title').innerText = title || 'Poster preview';
+            previewImage.src = image;
+            previewWrap.classList.toggle('hidden', !image);
+        }
+
+        async function savePoster(event) {
+            event.preventDefault();
+            if (!isAdmin()) return;
+            const title = document.getElementById('poster-title').value.trim();
+            const image = document.getElementById('poster-image').value.trim();
+            const error = document.getElementById('poster-form-error');
+            let imageUrl;
+            try {
+                imageUrl = new URL(image);
+            } catch {
+                error.innerText = 'Enter a valid image URL.';
+                error.classList.remove('hidden');
+                return;
+            }
+            if (!title || !['http:', 'https:'].includes(imageUrl.protocol)) {
+                error.innerText = 'Enter a title and a valid HTTP(S) image URL.';
+                error.classList.remove('hidden');
+                return;
+            }
+            const previousPosters = state.posters;
+            state.posters = [...state.posters, { id: Date.now(), title, image }];
+            if (!await persistPosters()) {
+                state.posters = previousPosters;
+                return;
+            }
+            document.getElementById('poster-form').reset();
+            error.classList.add('hidden');
+            updatePosterPreview();
+            renderAdminPosters();
+            renderUpdates();
+        }
+
+        async function deletePoster(id) {
+            if (!isAdmin()) return;
+            const previousPosters = state.posters;
+            state.posters = state.posters.filter(poster => poster.id !== id);
+            if (!await persistPosters()) {
+                state.posters = previousPosters;
+                return;
+            }
+            renderAdminPosters();
+            renderUpdates();
+        }
+        async function refreshAdminDashboard() {
+            if (!isAdmin()) return;
+            try {
+                const data = await apiRequest('/api/admin/data');
+                state.ordersList = data.orders;
+                renderAdminDashboard();
+            } catch (error) {
+                console.error('Unable to refresh administrator data:', error);
+                alert(`Orders could not be refreshed: ${error.message}`);
+            }
+        }
+        function renderAdminDashboard() {
+            const body = document.getElementById('admin-orders-table-body');
+            const dashboardDate = document.getElementById('admin-dashboard-date');
+            if (dashboardDate) dashboardDate.innerText = new Date().toLocaleDateString(undefined, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            const statusFlow = ['Pending', 'Approved', 'Cooking', 'Out for Delivery', 'Delivered'];
+            body.innerHTML = state.ordersList.map(o => {
+                const currentIndex = statusFlow.indexOf(o.status);
+                const nextStatus = statusFlow[currentIndex + 1];
+                const orderItems = Array.isArray(o.items) && o.items.length
+                    ? o.items.map(item => `${escapeHtml(item.name)} × ${item.qty}`).join('<br>')
+                    : 'Details unavailable';
+                const locationLink = Number.isFinite(o.latitude) && Number.isFinite(o.longitude)
+                    ? `<a class="text-emerald-700 underline" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps?q=${encodeURIComponent(`${o.latitude},${o.longitude}`)}">GPS pin (±${Math.round(o.locationAccuracy)} m)</a>`
+                    : 'GPS pin not provided';
+                const cancellationStage = o.cancellationPolicy === 'delivery_stage_deductions'
+                    ? 'Delivery stage'
+                    : o.cancellationPolicy === 'restaurant_stage_full_refund'
+                        ? 'Restaurant stage'
+                        : '';
+                const cancellationDetails = o.status === 'Cancelled'
+                    ? `<div class="space-y-1">
+                        <div class="font-bold">${cancellationStage}</div>
+                        <div>Food-making deduction: ₹${Number(o.foodMakingDeduction || 0).toFixed(2)}</div>
+                        <div>Delivery deduction: ₹${Number(o.deliveryDeduction || 0).toFixed(2)}</div>
+                        <div class="font-bold">Refund amount: ₹${Number(o.refundAmount || 0).toFixed(2)}</div>
+                        <div>Refund status: ${escapeHtml(o.refundStatus || 'not_requested')}</div>
+                        ${o.razorpayRefundId ? `<div>Razorpay refund ID: ${escapeHtml(o.razorpayRefundId)}</div>` : ''}
+                        ${o.cancellationReason ? `<div>Reason: ${escapeHtml(o.cancellationReason)}</div>` : ''}
+                        ${o.refundStatus && ['admin_requested', 'processing', 'failed'].includes(o.refundStatus) && o.paymentMethod === 'upi'
+                            ? `<div class="text-[10px] text-gray-600">If issued manually, enter the Razorpay refund ID to verify its gateway status.</div><button onclick="adminVerifyRefund('${escapeHtml(o.id)}')" class="mt-1 rounded-lg bg-purple-700 px-2 py-1 text-[10px] font-bold text-white">Verify Razorpay refund</button>`
+                            : ''}
+                    </div>`
+                    : '—';
+                return `<tr class="text-xs">
+                    <td class="p-3"><span class="font-bold">#${escapeHtml(o.id)}</span><div class="mt-1 text-[10px] text-gray-500">${orderItems}</div></td>
+                    <td class="p-3">${escapeHtml(o.name)}</td>
+                    <td class="p-3">${escapeHtml(o.phone || '—')}</td>
+                    <td class="p-3 min-w-48">${escapeHtml(o.address || '—')}<div class="mt-1 text-[10px]">${locationLink}</div></td>
+                    <td class="p-3">${escapeHtml(o.paymentMethod || o.payment || '—')}</td>
+                    <td class="p-3 font-black text-brand-red">₹${Number(o.total) || 0}</td>
+                    <td class="p-3"><span class="px-2 py-1 rounded-full font-bold ${o.status === 'Delivered' ? 'bg-emerald-100 text-emerald-700' : o.status === 'Cancelled' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}">${escapeHtml(o.status)}</span></td>
+                    <td class="p-3 min-w-48">${cancellationDetails}</td>
+                    <td class="p-3">
+                        ${nextStatus && o.status !== 'Cancelled' ? `<button onclick="adminUpdateOrder('${escapeHtml(o.id)}', '${nextStatus}')" class="bg-blue-600 text-white px-3 py-1 rounded-lg font-bold hover:bg-blue-700 transition">Move to ${nextStatus}</button>` : `<span class="${o.status === 'Cancelled' ? 'text-red-600' : 'text-emerald-600'} font-bold">${o.status === 'Cancelled' ? 'Cancelled' : 'Completed'}</span>`}
+                    </td></tr>`;
+            }).join('');
+            const totalSales = document.getElementById('stat-total-sales');
+            const totalOrders = document.getElementById('stat-total-orders');
+            const kdsCount = document.getElementById('stat-kds-count');
+            const occupiedTables = document.getElementById('stat-occupied-tables');
+            if (totalSales) totalSales.innerText = `₹${state.ordersList.reduce((s,o)=>s+o.total,0)}`;
+            if (totalOrders) totalOrders.innerText = state.ordersList.length;
+            const pendingOrders = document.getElementById('stat-pending-orders');
+            const menuItems = document.getElementById('stat-menu-items');
+            if (pendingOrders) pendingOrders.innerText = state.ordersList.filter(order => order.status === 'Pending').length;
+            if (menuItems) menuItems.innerText = state.menu.length;
+            if (kdsCount) kdsCount.innerText = state.kdsOrders.length;
+            if (occupiedTables) occupiedTables.innerText = `${state.tablesData.filter(t=>t.status==='occupied').length}/25`;
+        }
+        async function adminUpdateOrder(orderId, newStatus) {
+            if (!isAdmin()) return;
+            const order = state.ordersList.find(o => o.id === orderId);
+            if (!order) return;
+            let result;
+            try {
+                result = await apiRequest(`/api/admin/orders/${encodeURIComponent(orderId)}`, {
+                    method: 'PATCH',
+                    body: { status: newStatus }
+                });
+            } catch (error) {
+                console.error('Unable to update order:', error);
+                alert(`Order status could not be updated: ${error.message}`);
+                return;
+            }
+            Object.assign(order, result.order);
+            if (state.activeCustomerOrder && state.activeCustomerOrder.id === orderId) state.activeCustomerOrder.status = newStatus;
+            if (newStatus === 'Approved') {
+                state.kdsOrders.push({ id: Math.floor(Math.random() * 900), title: `Delivery ${orderId}`, items: ["Order Items x1"], status: 'Cooking' });
+                renderKDSOrders();
+            }
+            renderAdminDashboard(); updateTrackerUI();
+        }
+        async function adminVerifyRefund(orderId) {
+            if (!isAdmin()) return;
+            const refundId = window.prompt('Enter the Razorpay refund ID to verify:');
+            if (refundId === null) return;
+            try {
+                const result = await apiRequest(
+                    `/api/admin/orders/${encodeURIComponent(orderId)}/refund/verify`,
+                    { method: 'POST', body: { refundId } }
+                );
+                const index = state.ordersList.findIndex(order => order.id === orderId);
+                if (index >= 0) state.ordersList[index] = result.order;
+                if (state.activeCustomerOrder?.id === orderId) {
+                    state.activeCustomerOrder = result.order;
+                    updateTrackerUI();
+                }
+                renderAdminDashboard();
+            } catch (error) {
+                console.error('Unable to verify Razorpay refund:', error);
+                alert(`Refund status could not be verified: ${error.message}`);
+            }
+        }
+        function renderAdminMenu() {
+            const body = document.getElementById('admin-menu-table-body');
+            body.innerHTML = state.menu.map(item => `<tr class="text-xs">
+                <td class="p-3"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="w-12 h-12 object-cover rounded-lg"></td>
+                <td class="p-3 font-bold">${escapeHtml(item.name)}</td>
+                <td class="p-3">${escapeHtml(item.category)}</td>
+                <td class="p-3">₹${Number(item.price) || 0}</td>
+                <td class="p-3 whitespace-nowrap">
+                    ${state.userRole === 'admin' ? `
+                        <button onclick="openAddDishModal(${item.id})" class="text-blue-600 font-bold mr-3"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="deleteDish(${item.id})" class="text-red-600 font-bold"><i class="fa-solid fa-trash"></i> Delete</button>
+                    ` : ''}
+                </td>
+            </tr>`).join('');
+        }
+        async function deleteDish(id) {
+            if (!isAdmin()) return;
+            const originalMenu = state.menu;
+            state.menu = state.menu.filter(item => item.id !== id);
+            if (!await persistMenu()) {
+                state.menu = originalMenu;
+                return;
+            }
+            renderAdminMenu();
+            renderMenuGrid();
+            renderCategoryCarousel();
+            renderCategoryPills();
+            renderAdminDashboard();
+        }
+        function openAddDishModal(id = null) {
+            if (!isAdmin()) return;
+            editingDishId = id;
+            const dish = id === null ? null : state.menu.find(item => item.id === id);
+            document.getElementById('dish-modal-title').innerText = dish ? 'Edit Menu Item' : 'Add Menu Item';
+            document.getElementById('dish-save-btn').innerText = dish ? 'Save Changes' : 'Add Item';
+            document.getElementById('dish-name').value = dish?.name || '';
+            document.getElementById('dish-category').value = dish?.category || '';
+            document.getElementById('dish-price').value = dish?.price ?? '';
+            document.getElementById('dish-image').value = dish?.image || '';
+            document.getElementById('dish-form-error').classList.add('hidden');
+            const categoryNames = [...new Set([
+                ...state.categories.filter(category => category.id !== 'all').map(category => category.name),
+                ...state.menu.map(item => item.category)
+            ])];
+            document.getElementById('dish-category-options').innerHTML = categoryNames
+                .map(name => `<option value="${escapeHtml(name)}"></option>`).join('');
+            updateDishImagePreview();
+            document.getElementById('dish-modal').classList.remove('hidden');
+        }
+        function closeDishModal() {
+            document.getElementById('dish-modal').classList.add('hidden');
+            editingDishId = null;
+        }
+        function updateDishImagePreview() {
+            const imageUrl = document.getElementById('dish-image').value.trim();
+            const previewWrap = document.getElementById('dish-image-preview-wrap');
+            const preview = document.getElementById('dish-image-preview');
+            if (!imageUrl) {
+                previewWrap.classList.add('hidden');
+                preview.removeAttribute('src');
+                return;
+            }
+            preview.src = imageUrl;
+            previewWrap.classList.remove('hidden');
+        }
+        async function saveDish(event) {
+            event.preventDefault();
+            if (!isAdmin()) return;
+            const name = document.getElementById('dish-name').value.trim();
+            const category = document.getElementById('dish-category').value.trim();
+            const price = Number(document.getElementById('dish-price').value);
+            const image = document.getElementById('dish-image').value.trim();
+            const error = document.getElementById('dish-form-error');
+            let imageUrl;
+            try {
+                imageUrl = new URL(image);
+            } catch {
+                error.innerText = 'Enter a valid image URL.';
+                error.classList.remove('hidden');
+                return;
+            }
+            if (!name || !category || !Number.isFinite(price) || price <= 0 ||
+                !['http:', 'https:'].includes(imageUrl.protocol)) {
+                error.innerText = 'Enter a name, category, valid positive price, and an HTTP(S) image URL.';
+                error.classList.remove('hidden');
+                return;
+            }
+            const originalMenu = state.menu;
+            if (editingDishId === null) {
+                state.menu = [...state.menu, { id: Date.now(), name, category, price, image, description: '' }];
+            } else {
+                state.menu = state.menu.map(item => item.id === editingDishId
+                    ? { ...item, name, category, price, image }
+                    : item);
+            }
+            if (!await persistMenu()) {
+                state.menu = originalMenu;
+                return;
+            }
+            closeDishModal();
+            renderAdminMenu();
+            renderMenuGrid();
+            renderCategoryCarousel();
+            renderCategoryPills();
+            renderAdminDashboard();
+        }
+        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+    </script>
+</body>
+</html>
